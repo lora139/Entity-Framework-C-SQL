@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ER_Core_2
 {
@@ -11,6 +12,10 @@ namespace ER_Core_2
    {
       static void Main(string[] args)
       {
+         var context = new SchoolDBContext();
+         var students = context.Students
+                  .FromSqlRaw("Select * from Student where FirstName = 'Bill'")
+                  .ToList();
          //Disconnected entity
          //var std = new Student() { FirstName = "Bill" };
 
@@ -40,41 +45,67 @@ namespace ER_Core_2
          //stud.FirstName = "Lora";
 
          //ENTITY TO BE DELETED
-         var student = new Student()
-         {
-            StudentId = 8
-         };
+         //var student = new Student()
+         //{
+         //   StudentId = 8
+         //};
 
-         using (var context = new SchoolDBContext())
-         {
-            //ADD
-            //var std = new Student()
-            //{
-            //   FirstName = "Bill"
-            //};
-            //context.Students.Add(std);
+         //DETACHED
+         //var disconnectedEntity = new Student() { StudentId = 4, FirstName = "Bill" };
 
-            //ADD ON FIRST POSITION
-            //var std = context.Students.First<Student>();
-            //update 
-            //std.FirstName = "Grinch";
-            //std.LastName = "Filch";
+         //using (var context = new SchoolDBContext())
+         //{
 
-            //DELETE
-            //context.Students.Remove(std);
+         //ADD
+         //var std = new Student()
+         //{
+         //   FirstName = "Bill"
+         //};
+         //context.Students.Add(std);
 
-            //1. Attach an entity to context with Added EntityState
-            //context.Add<Student>(std);
+         //ADD ON FIRST POSITION
+         //var std = context.Students.First<Student>();
+         //update 
+         //std.FirstName = "Grinch";
+         //std.LastName = "Filch";
 
-            //UPDATE
-            //context.Update<Student>(stud);
+         //DELETE
+         //context.Students.Remove(std);
 
-            //DELETE FROM DISCONNECTED SENERIO
-            context.Remove<Student>(student);
+         //1. Attach an entity to context with Added EntityState
+         //context.Add<Student>(std);
 
-            context.SaveChanges();
-         }
+         //UPDATE
+         //context.Update<Student>(stud);
+
+         //DELETE FROM DISCONNECTED SENERIO
+         //context.Remove<Student>(student);
+
+         //context.SaveChanges();
+
+         //UNCHANGED STATE
+         //var student = context.Students.First();
+         //DisplayStates(context.ChangeTracker.Entries());
+
+         //DETACHED
+         //Console.Write(context.Entry(disconnectedEntity).State);
+
+
+         //}
       }
+
+      //UNCHANGED STATE
+      //private static void DisplayStates(IEnumerable<EntityState> entries)
+      //{
+      //   foreach(var entry in entries)
+      //   {
+      //      Console.WriteLine($"Entity: {entry.Entity.GetType().Name},
+      //                       State: { entry.State.ToString(); };
+      //   }
+      //}   
+
+
+
       //querying
 
       //private static void Main(string[] args)
@@ -96,7 +127,7 @@ namespace ER_Core_2
          {
             Console.WriteLine(student.FirstName);
          }
-            Console.ReadLine();
+         Console.ReadLine();
       }
 
    }

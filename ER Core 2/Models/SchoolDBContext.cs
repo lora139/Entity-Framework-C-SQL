@@ -38,6 +38,11 @@ namespace ER_Core_2.Models
       {
          //modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
          //OnModelCreatingPartial(modelBuilder);
+
+         //SHADOW PROPERTY
+         modelBuilder.Entity<Student>().Property<DateTime>("CreatedDate");
+         modelBuilder.Entity<Student>().Property<DateTime>("UpdatedDate");
+
          modelBuilder.Entity<Course>(entity =>
          {
             entity.Property(e => e.CourseName)
@@ -77,6 +82,15 @@ namespace ER_Core_2.Models
             //entity.Property(e => e.Grade)
             //    .HasMaxLength(50)
             //    .IsUnicode(false);
+
+            entity.Property(e => e.DateOfBirth)
+               .HasColumnType("datetime2")
+               .HasPrecision(0);
+
+            entity.Property(e => e.Height)
+                .HasPrecision(2, 2);
+
+            entity.Property(e => e.Weight);
 
             entity.HasOne(d => d.Standard)
                 .WithMany(p => p.Student)
