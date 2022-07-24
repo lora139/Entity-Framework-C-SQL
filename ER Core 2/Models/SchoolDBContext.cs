@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq;
 using System.Data;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 #nullable disable
 
@@ -17,20 +19,28 @@ namespace ER_Core_2.Models
       public virtual DbSet<StudentCourse> StudentCourse { get; set; }
       public virtual DbSet<Teacher> Teacher { get; set; }
 
+      //static LoggerFactory object
+      public static readonly ILoggerFactory loggerFactory = new LoggerFactory(new[] {
+              new ConsoleLoggerProvider((_, __) => true, true)
+        });
+
       public SchoolDBContext()
         {
         }
-      //  public SchoolDBContext(DbContextOptions<SchoolDBContext> options)
-      //      : base(options)
-      //  {
-      //  }
+      public SchoolDBContext(DbContextOptions<SchoolDBContext> options)
+          : base(options)
+      {
+      }
 
       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)  //The OnConfiguring() method allows us to select and configure the data source to be used with a context using DbContextOptionsBuilder
       {
          if (!optionsBuilder.IsConfigured)
          {
             //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=SchoolDB;Trusted_Connection=True;");
+            optionsBuilder
+               .UseLoggerFactory(loggerFactory)  //tie-up DbContext with LoggerFactory object
+               .EnableSensitiveDataLogging()
+               .UseSqlServer("Server=.\\SQLEXPRESS;Database=SchoolDB;Trusted_Connection=True;");
          }
       }
 
